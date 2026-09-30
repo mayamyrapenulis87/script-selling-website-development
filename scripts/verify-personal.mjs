@@ -1,0 +1,172 @@
+import dotenv from "dotenv";
+import { chromium, request } from "playwright";
+import { expect } from "@playwright/test";
+import { randomUUID } from "node:crypto";
+import { mkdir } from "node:fs/promises";
+import { Pool } from "pg";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { sql } from "drizzle-orm";
+
+dotenv.config({ quiet: true });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const db = drizzle(pool);
+const base = process.env.NASKAH_TEST_URL || "http://localhost:3000";
+const suffix = randomUUID().slice(0, 8);
+const writerEmail = `personal-test-${suffix}@example.com`;
+const buyerEmail = `personal-buyer-${suffix}@example.com`;
+const password = randomUUID();
+const novelTitle = `Novel Draf Ujian ${suffix}`;
+const radioTitle = `Drama Radio Ujian ${suffix}`;
+const screenTitle = `Skrip Layar Ujian ${suffix}`;
+const marker = `PRIVATE-NOVEL-${randomUUID()}`;
+let browser, publicAPI, cleanup = false;
+function check(name, condition) { if (!condition) throw new Error(`FAILED: ${name}`); console.log(`PASS: ${name}`); }
+
+async function verify() {
+  try {
+    await mkdir(".artifacts", { recursive: true });
+    publicAPI = await request.newContext({ baseURL: base });
+    const catalog = await (await publicAPI.get("/api/works")).json();
+    const formats = ["Manuskrip novel", "Telemovie", "Drama bersiri", "Skrip layar", "Drama radio", "Filem pendek"];
+    check("All six formats have examples", formats.every((format) => catalog.works.some((work) => work.format === format)));
+    check("Example novel is clearly marked incomplete", catalog.works.some((work) => work.format === "Manuskrip novel" && work.progress === "Separuh siap" && work.duration === 0));
+    check("Public API excludes file contents", catalog.works.every((work) => !("fileData" in work)));
+    const sitemap = await (await publicAPI.get("/sitemap.xml")).text();
+    check("Sitemap contains shareable work pages", catalog.works.every((work) => sitemap.includes(`/karya/${work.id}`)));
+    check("Sitemap excludes private pages", !sitemap.includes("/pesanan/") && !sitemap.includes("/studio"));
+    const robots = await (await publicAPI.get("/robots.txt")).text();
+    check("Crawler rules protect private order and writer routes", robots.includes("Disallow: /pesanan/") && robots.includes("Disallow: /studio"));
+    check("Unknown works return 404", (await publicAPI.get("/karya/not-a-real-work")).status() === 404);
+    check("Anonymous profile changes are blocked", (await publicAPI.patch("/api/profile", { data: {} })).status() === 401);
+
+    browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
+    const seller = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const buyer = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const errors = [];
+    for (const page of [seller, buyer, mobile]) page.on("pageerror", (error) => errors.push(error.message));
+    await buyer.goto(base, { waitUntil: "networkidle" });
+    await buyer.evaluate(() => document.fonts.ready);
+    await buyer.screenshot({ path: ".artifacts/personal-desktop.png", fullPage: false });
+    await buyer.getByRole("button", { name: "Manuskrip novel", exact: true }).click();
+    check("Novel category filters the catalog", await buyer.locator(".work-card").count() === 1);
+    await expect(buyer.locator(".work-meta")).toContainText("Separuh siap");
+    await buyer.getByRole("button", { name: "Drama radio", exact: true }).click();
+    await expect(buyer.locator(".work-card")).toHaveCount(1);
+    check("Radio category filters the catalog", true);
+    await mobile.goto(base, { waitUntil: "networkidle" });
+    await mobile.evaluate(() => document.fonts.ready);
+    await mobile.screenshot({ path: ".artifacts/personal-mobile.png", fullPage: false });
+    check("Expanded categories do not overflow a phone screen", await mobile.evaluate(() => document.documentElement.scrollWidth === innerWidth));
+    await mobile.getByRole("button", { name: "Drama radio", exact: true }).click();
+    await expect(mobile.locator(".work-card")).toHaveCount(1);
+    check("Phone users can reach later categories", true);
+
+    const auth = await (await publicAPI.get("/api/auth")).json();
+    if (!auth.needsSetup) { console.log("An owner exists; private tests skipped without modifying the account."); return; }
+    cleanup = true;
+    await seller.goto(`${base}/studio`, { waitUntil: "networkidle" });
+    await seller.getByLabel("Nama pena / nama penulis").fill("Alya Rahman");
+    await seller.getByLabel("Alamat e-mel", { exact: true }).fill(writerEmail);
+    await seller.getByLabel("Kata laluan", { exact: true }).fill(password);
+    await seller.getByRole("button", { name: "Cipta ruang penulis", exact: true }).click();
+    await expect(seller.getByRole("heading", { name: "Selamat menulis, Alya." })).toBeVisible();
+    await seller.getByRole("button", { name: "Profil & blog", exact: true }).click();
+    const profileDialog = seller.getByRole("dialog");
+    await profileDialog.getByLabel(/^Tentang anda/).fill("Saya menulis novel, skrip televisyen, layar dan drama radio. Ini bio sementara untuk ujian.");
+    await profileDialog.getByLabel(/^Pautan blog/).fill("https://contoh-penulis.blogspot.com");
+    await profileDialog.getByRole("button", { name: "Simpan profil", exact: true }).click();
+    await expect(seller.getByRole("dialog")).toHaveCount(0);
+    check("Profile rejects unsafe blog URLs", (await seller.request.patch(`${base}/api/profile`, { data: { displayName: "Alya Rahman", bio: "", blogUrl: "javascript:alert(1)" } })).status() === 400);
+    const publicProfile = await (await publicAPI.get("/api/profile")).json();
+    check("Public profile has no credentials or account email", !("passwordHash" in publicProfile.profile) && !("email" in publicProfile.profile));
+    await buyer.goto(base, { waitUntil: "networkidle" });
+    await expect(buyer.getByRole("link", { name: "Baca blog saya" })).toHaveAttribute("href", "https://contoh-penulis.blogspot.com/");
+    check("Existing Blogger blog is linked from the personal site", true);
+
+    await seller.getByRole("button", { name: "Muat naik skrip", exact: true }).click();
+    const form = seller.getByRole("dialog");
+    await form.getByLabel(/^Tajuk naskah/).fill(novelTitle);
+    await form.getByLabel("Format karya", { exact: true }).selectOption("Manuskrip novel");
+    await form.getByLabel("Tahap siap karya", { exact: true }).selectOption("Separuh siap");
+    await form.getByLabel("Tempoh Hold", { exact: true }).selectOption("6");
+    await form.getByLabel(/^Sinopsis/).fill("Draf bahagian pertama sebuah novel tentang keluarga dan perubahan. Bab seterusnya belum lengkap dan penyempurnaan perlu dipersetujui sebelum pembelian.");
+    await form.getByLabel(/^Pratonton manuskrip/).fill("BAB 1\n\nSebuah cerita bermula dari pintu rumah yang terbuka.");
+    await form.getByLabel(/^Harga \(RM\)/).fill("1700");
+    await form.getByLabel(/^Jumlah halaman/).fill("120");
+    await form.getByLabel("Muat naik fail skrip", { exact: true }).setInputFiles({ name: "novel-draf.txt", mimeType: "text/plain", buffer: Buffer.from(marker) });
+    await form.getByRole("button", { name: "Terbitkan naskah", exact: true }).click();
+    await expect(seller.getByRole("dialog")).toHaveCount(0);
+    await expect(seller.locator(".table-work").filter({ hasText: novelTitle })).toBeVisible();
+    const uploaded = (await (await publicAPI.get("/api/works")).json()).works.find((work) => work.title === novelTitle);
+    check("Novel form saves incomplete progress, no screen duration and custom Hold", uploaded && uploaded.progress === "Separuh siap" && uploaded.duration === 0 && uploaded.holdHours === 6);
+    await buyer.goto(`${base}/karya/${uploaded.id}`, { waitUntil: "networkidle" });
+    await expect(buyer.getByRole("heading", { name: novelTitle, exact: true, level: 1 })).toBeVisible();
+    await expect(buyer.locator(".draft-note")).toContainText("Karya ini belum lengkap.");
+    check("Work page has a unique search title", (await buyer.title()).includes(novelTitle));
+    check("Work page has a canonical URL", (await buyer.locator('link[rel="canonical"]').getAttribute("href")).endsWith(`/karya/${uploaded.id}`));
+    const structured = JSON.parse(await buyer.locator('script[type="application/ld+json"]').textContent());
+    check("Structured data reflects the actual draft", structured.name === novelTitle && structured.creativeWorkStatus === "Separuh siap");
+    check("Private script is not embedded into a public page", !(await buyer.content()).includes(marker));
+    check("No unapproved advertising scripts are activated", await buyer.locator('script[src*="googlesyndication"]').count() === 0);
+    await buyer.screenshot({ path: ".artifacts/personal-novel.png" });
+    await mobile.goto(`${base}/karya/${uploaded.id}`, { waitUntil: "networkidle" });
+    check("Shareable work page fits phone screens", await mobile.evaluate(() => document.documentElement.scrollWidth === innerWidth));
+    await buyer.getByRole("button", { name: "Hold", exact: true }).click();
+    const holdDialog = buyer.getByRole("dialog");
+    await expect(holdDialog).toContainText("6 jam");
+    await expect(holdDialog.locator(".draft-note")).toContainText("karya separuh siap");
+    await holdDialog.getByLabel(/^Nama penuh/).fill("Pembeli Novel Ujian");
+    await holdDialog.getByLabel(/^Alamat e-mel/).fill(buyerEmail);
+    await holdDialog.locator(".checkbox-field input").check();
+    await holdDialog.getByRole("button", { name: "Hantar permintaan Hold", exact: true }).click();
+    await expect(buyer.getByText("Terima kasih atas minat anda.")).toBeVisible();
+    await expect(buyer.locator(".order-success")).toContainText("6 jam");
+    const trackingPath = await buyer.getByRole("link", { name: "Lihat status pesanan" }).getAttribute("href");
+    const token = trackingPath.split("/").pop();
+    const order = (await db.execute(sql`select created_at, expires_at from orders where access_token=${token}`)).rows[0];
+    check("Hold uses the server's configured duration", Math.abs(new Date(order.expires_at).getTime() - new Date(order.created_at).getTime() - 6 * 3600000) < 5000);
+    check("Pending draft cannot be downloaded", (await publicAPI.get(`/api/download/${token}`)).status() === 403);
+    const before = new Date(order.expires_at).getTime();
+    const edit = await seller.request.patch(`${base}/api/works/${uploaded.id}`, { multipart: { title: novelTitle, format: "Manuskrip novel", genre: "Drama", synopsis: uploaded.synopsis, excerpt: uploaded.excerpt, price: "1700", pages: "120", episodes: "1", duration: "0", progress: "Separuh siap", holdHours: "72", status: "hold", image: "/images/senja.jpg", featured: "false" } });
+    check("Reserved draft can be edited", edit.status() === 200);
+    check("Changing future Hold duration preserves an active reservation", new Date((await db.execute(sql`select reserved_until from manuscripts where id=${uploaded.id}`)).rows[0].reserved_until).getTime() === before);
+    await buyer.getByRole("link", { name: "Lihat status pesanan" }).click();
+    await expect(buyer.locator(".order-page-intro")).toContainText("6 jam");
+    const activeOrders = await (await seller.request.get(`${base}/api/studio`)).json();
+    const purchase = activeOrders.orders.find((item) => item.manuscriptId === uploaded.id);
+    check("Author can confirm a held draft sale", (await seller.request.patch(`${base}/api/orders/${purchase.id}`, { data: { action: "complete" } })).status() === 200);
+    const download = await publicAPI.get(`/api/download/${token}`);
+    check("Confirmed buyer receives the exact uploaded draft", download.status() === 200 && (await download.text()).includes(marker));
+
+    const radio = await seller.request.post(`${base}/api/works`, { multipart: { title: radioTitle, format: "Drama radio", genre: "Misteri", synopsis: "Drama radio dua belas episod tentang suara misteri yang menyatukan penduduk sebuah kampung dan keluarga yang terpisah.", excerpt: "SFX: HUJAN.\nPENYAMPAI: Selamat malam.", price: "2400", pages: "180", episodes: "12", duration: "15", progress: "Lengkap", holdHours: "24", status: "available", image: "/images/rumah.jpg", script: { name: "radio.txt", mimeType: "text/plain", buffer: Buffer.from("SKRIP RADIO UJIAN") } } });
+    const radioWork = (await radio.json()).work;
+    check("Radio upload saves episodic format and duration", radio.status() === 201 && radioWork.episodes === 12 && radioWork.duration === 15);
+    const hold = await publicAPI.post("/api/orders", { data: { manuscriptId: radioWork.id, type: "hold", name: "Pembeli Radio", email: buyerEmail } });
+    const radioOrder = await hold.json();
+    check("Radio Hold uses its own 24-hour setting", hold.status() === 201 && radioOrder.holdHours === 24);
+    const past = new Date(Date.now() - 60000);
+    await db.execute(sql`update manuscripts set reserved_until=${past} where id=${radioWork.id}`);
+    await db.execute(sql`update orders set expires_at=${past} where access_token=${radioOrder.accessToken}`);
+    const release = (await (await publicAPI.get("/api/works")).json()).works.find((work) => work.id === radioWork.id);
+    check("Expired custom-duration reservation reopens the work", release.status === "available");
+    const screen = await seller.request.post(`${base}/api/works`, { multipart: { title: screenTitle, format: "Skrip layar", genre: "Thriller", synopsis: "Skrip filem panjang tentang sebuah keluarga yang menyiasat rahsia tersembunyi di kota mereka selepas satu kejadian misteri.", price: "7000", pages: "110", episodes: "1", duration: "120", progress: "Lengkap", holdHours: "72", status: "available", image: "/images/kota.jpg", script: { name: "layar.txt", mimeType: "text/plain", buffer: Buffer.from("SKRIP LAYAR UJIAN") } } });
+    const screenWork = (await screen.json()).work;
+    check("Feature screenplay format can be published", screen.status() === 201 && screenWork.format === "Skrip layar");
+    check("Invalid Hold settings are rejected", (await seller.request.post(`${base}/api/works`, { multipart: { title: "Invalid Hold", format: "Manuskrip novel", genre: "Drama", synopsis: "Draf ujian yang tidak sepatutnya diterbitkan kerana tempoh tidak sah.", price: "100", pages: "10", duration: "0", progress: "Separuh siap", holdHours: "999", status: "available", image: "/images/senja.jpg" } })).status() === 400);
+    check("No browser runtime errors", errors.length === 0);
+    console.log("PERSONAL COLLECTION TESTS COMPLETE");
+  } finally {
+    if (browser) await browser.close();
+    if (publicAPI) await publicAPI.dispose();
+    if (cleanup) {
+      await db.execute(sql`delete from orders where email=${buyerEmail} or manuscript_id in (select id from manuscripts where title in (${novelTitle},${radioTitle},${screenTitle}))`);
+      await db.execute(sql`delete from manuscripts where title in (${novelTitle},${radioTitle},${screenTitle})`);
+      const owner = (await db.execute(sql`select id from writer_settings where email=${writerEmail}`)).rows;
+      if (owner.length) { await db.execute(sql`delete from writer_sessions`); await db.execute(sql`delete from writer_settings where email=${writerEmail}`); }
+      console.log("Temporary private test records removed; owner setup remains available.");
+    }
+    await pool.end();
+  }
+}
+verify().catch((error) => { console.error(error); process.exitCode = 1; });
