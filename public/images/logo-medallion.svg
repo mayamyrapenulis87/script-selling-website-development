@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8e8b4"/>
+      <stop offset=".5" stop-color="#d6ae54"/>
+      <stop offset="1" stop-color="#a1792a"/>
+    </linearGradient>
+  </defs>
+  <!-- concentric rings -->
+  <circle cx="120" cy="120" r="116" stroke="url(#mg)" stroke-width="2.6"/>
+  <circle cx="120" cy="120" r="109" stroke="url(#mg)" stroke-width=".9" opacity=".65"/>
+  <circle cx="120" cy="120" r="104" stroke="url(#mg)" stroke-width="1.6" opacity=".85"/>
+  <!-- laurel wreath, left and right arcs -->
+  <g stroke="url(#mg)" stroke-width="1.8" stroke-linecap="round" fill="none">
+    <path d="M28 78c-9 14-11 30-6 45M34 70c-9 14-12 31-7 47M40 63c-9 14-13 32-8 49"/>
+    <path d="M212 78c9 14 11 30 6 45M206 70c9 14 12 31 7 47M200 63c9 14 13 32 8 49"/>
+  </g>
+  <g fill="url(#mg)" opacity=".8">
+    <ellipse cx="24" cy="90" rx="3" ry="7" transform="rotate(-24 24 90)"/>
+    <ellipse cx="21" cy="106" rx="3" ry="7" transform="rotate(-10 21 106)"/>
+    <ellipse cx="216" cy="90" rx="3" ry="7" transform="rotate(24 216 90)"/>
+    <ellipse cx="219" cy="106" rx="3" ry="7" transform="rotate(10 219 106)"/>
+    <ellipse cx="31" cy="74" rx="3" ry="7" transform="rotate(-38 31 74)"/>
+    <ellipse cx="209" cy="74" rx="3" ry="7" transform="rotate(38 209 74)"/>
+  </g>
+  <!-- brand name -->
+  <text x="120" y="86" text-anchor="middle" fill="url(#mg)"
+        font-family="Georgia, 'Times New Roman', serif" font-size="22" letter-spacing=".5">mayamyrastories</text>
+  <!-- interlocked MM monogram -->
+  <g fill="url(#mg)">
+    <path d="M60 156V98h13l11 27 11-27h13v58h-11V118l-13 28-13-28v38Z"/>
+    <path d="M103 156V98h13l11 27 11-27h13v58h-11V118l-13 28-13-28v38Z" opacity=".88"/>
+  </g>
+  <path d="M120 148c9-6 15-13 17-24" stroke="#8a6620" stroke-width="2.2" stroke-linecap="round" opacity=".6" fill="none"/>
+  <!-- tagline -->
+  <text x="120" y="184" text-anchor="middle" fill="url(#mg)" opacity=".92"
+        font-family="Georgia, 'Times New Roman', serif" font-size="13" letter-spacing="2.5">Where Stories Find You</text>
+  <!-- ornaments -->
+  <path d="M120 198l5 6-5 6-5-6Z" fill="url(#mg)"/>
+  <g fill="url(#mg)" opacity=".7">
+    <circle cx="102" cy="204" r="1.8"/><circle cx="138" cy="204" r="1.8"/>
+    <circle cx="93" cy="204" r="1.4"/><circle cx="147" cy="204" r="1.4"/>
+  </g>
+</svg>

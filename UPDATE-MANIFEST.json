@@ -17,8 +17,8 @@
     },
     {
       "path": "KEMAS-KINI-WINDOWS.md",
-      "bytes": 2964,
-      "sha256": "280d1453e07d2d2b10ce2638b20e68f87afd5f92b6cf3eb9598a15ab7a4c855c"
+      "bytes": 3860,
+      "sha256": "a5535258a271abc608fb4a50d092540cf94c7fd930157bd8d5ecb9a2208fb260"
     },
     {
       "path": "drizzle.config.json",
@@ -57,8 +57,8 @@
     },
     {
       "path": "public/favicon.svg",
-      "bytes": 378,
-      "sha256": "a62475f744d420d559e0c5d4ab96a1c2d1e00fcb0fc7f426abe2ad8e1658c2f6"
+      "bytes": 491,
+      "sha256": "ff48266135c4e91108168620d60f71e4c9dbae5bc20878804e9f026ac6d3b669"
     },
     {
       "path": "public/fonts/dm-sans-semibold.ttf",
@@ -131,6 +131,16 @@
       "sha256": "98e4d73ed958505c34a5591fbfc20490334d9e4eb090ab06023d15ef1a964aed"
     },
     {
+      "path": "public/images/logo-header.svg",
+      "bytes": 1092,
+      "sha256": "3a4c6656b8abe59d95e468e1d468154c8048c1ad234f316ef24585ef77a13963"
+    },
+    {
+      "path": "public/images/logo-medallion.svg",
+      "bytes": 2444,
+      "sha256": "cb8ba11eb6056b5bf793f2c0f860df16c09e6d4702167e6236da7dc9a081670c"
+    },
+    {
       "path": "public/images/perpustakaan.jpg",
       "bytes": 255268,
       "sha256": "39ff826601e7161e3ca21e7a7b615cc9d9d482ea2fd15cf2dca56a46f21ed82d"
@@ -174,6 +184,16 @@
       "path": "public/images/tun-teja.jpg",
       "bytes": 206103,
       "sha256": "0505498e6d6b55704564445823fae8fd623e77abfa364bdf1254d5701a4d40ce"
+    },
+    {
+      "path": "public/images/zon-bacaan-emblem.svg",
+      "bytes": 1584,
+      "sha256": "b03c9f9509ad0fd61a302c24e2769c5576ff5adb8e619903e10766fb991f9538"
+    },
+    {
+      "path": "public/images/zon-bacaan-panel.svg",
+      "bytes": 2601,
+      "sha256": "201dc7a40d4097e3eef08ed51d05cbfb7014b0bf03e367e6452785a9d6a64998"
     },
     {
       "path": "scripts/export-update.py",
@@ -272,8 +292,8 @@
     },
     {
       "path": "src/app/globals.css",
-      "bytes": 86430,
-      "sha256": "c32aff5a7eddc249e2fe84494d961ee6af971a2f0d7d579bc6646bd10abf7752"
+      "bytes": 88010,
+      "sha256": "ed60fc06f97bed04902ac1844ac4ece2bbeeff34e178f549fdf5399aaaad03e6"
     },
     {
       "path": "src/app/karya/[id]/page.tsx",
@@ -317,13 +337,13 @@
     },
     {
       "path": "src/components/brand.tsx",
-      "bytes": 813,
-      "sha256": "8d96beea57c1fd631b75599798279552dd43222cd5e3b9c34a982a53a26673b3"
+      "bytes": 528,
+      "sha256": "50c4914a410e07b0939f836d577b6c33dbe37a82e43dbee4a5a546c69c1ae5b3"
     },
     {
       "path": "src/components/marketplace.tsx",
-      "bytes": 28378,
-      "sha256": "0a806a6be757857fbe14edc4bab7ce2c2d7feca1dbe12b49ce5255e6be6e8baf"
+      "bytes": 28525,
+      "sha256": "07f2dae4ca3c4d97a7e22724eb6418aa1bb1f64256f6695999a0093600053cd4"
     },
     {
       "path": "src/components/profile-dialog.tsx",

@@ -34,6 +34,15 @@ Website dikemas kini pada repository GitHub dan projek Vercel yang sama. Anda ti
 
 Jika deployment gagal, buka **Build Logs** sebelum cuba semula. Jangan delete/reset projek Neon atau database.
 
+## Tukar alamat kepada mayamyrastories.vercel.app
+1. Buka projek Vercel, pilih **Settings → General**.
+2. Dalam medan **Project Name**, taip `mayamyrastories` (huruf kecil sahaja) dan klik **Save**.
+3. Tunggu satu deployment baharu berstatus **Ready**, kemudian buka `https://mayamyrastories.vercel.app`.
+
+Nama lama `script-selling-website-development.vercel.app` **tidak dijamin** terus berfungsi selepas rename. Guna nama baharu dalam setiap promosi. If `mayamyrastories.vercel.app` sudah digunakan oleh orang lain, Vercel akan menolak; pilih variasi seperti `mayamyrastories-maya.vercel.app` dan kemas kini pautan promosi anda.
+
+GitHub, auto-deploy, dan database Neon kekal seperti biasa kerana ia terikat kepada Project ID, bukan nama. Jika ada **Environment Variables** yang menyimpan alamat lama, kemas kini ia secara manual di **Settings → Environment Variables**, kemudian redeploy.
+
 ## Database dan fail penulis
 - Kekalkan `DATABASE_URL` sedia ada dalam **Vercel → Settings → Environment Variables**.
 - Jangan tukar URL produksi kepada `localhost`.

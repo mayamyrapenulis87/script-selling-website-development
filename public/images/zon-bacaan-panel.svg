@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 440" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="gold2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e3ac"/>
+      <stop offset=".5" stop-color="#dbb75f"/>
+      <stop offset="1" stop-color="#a87d2c"/>
+    </linearGradient>
+  </defs>
+  <rect width="360" height="440" fill="#0d0d0d"/>
+  <!-- soft vignette -->
+  <rect width="360" height="440" fill="url(#none)" opacity="0"/>
+  <ellipse cx="180" cy="215" rx="160" ry="195" fill="#151515"/>
+  <!-- double oval frame -->
+  <ellipse cx="180" cy="205" rx="150" ry="180" stroke="url(#gold2)" stroke-width="2.6"/>
+  <ellipse cx="180" cy="205" rx="142" ry="172" stroke="url(#gold2)" stroke-width=".9" opacity=".65"/>
+  <!-- corner flourishes -->
+  <g stroke="url(#gold2)" stroke-width="1.8" stroke-linecap="round" opacity=".85">
+    <path d="M40 95c12-1 20-7 23-19M320 95c-12-1-20-7-23-19M40 315c12 1 20 7 23 19M320 315c-12 1-20 7-23 19"/>
+  </g>
+  <!-- open book -->
+  <g fill="url(#gold2)">
+    <path d="M180 96c-16-11-37-15-58-11v82c21-4 42 0 58 11Z"/>
+    <path d="M180 96c16-11 37-15 58-11v82c-21-4-42 0-58 11Z" opacity=".82"/>
+  </g>
+  <g stroke="#6f5218" stroke-width="2" stroke-linecap="round" opacity=".55">
+    <path d="M135 104c14-2 29 0 40 5M135 118c14-2 29 0 40 5M135 132c14-2 29 0 40 5M135 146c14-2 29 0 40 5"/>
+    <path d="M225 104c-14-2-29 0-40 5M225 118c-14-2-29 0-40 5M225 132c-14-2-29 0-40 5M225 146c-14-2-29 0-40 5"/>
+  </g>
+  <path d="M180 96v82" stroke="#7d5c1c" stroke-width="2.4" opacity=".7"/>
+  <path d="M116 92l11 2v82l-11-2zM244 92l-11 2v82l11-2z" fill="url(#gold2)" opacity=".65"/>
+  <!-- diamond ornament -->
+  <path d="M180 190l8 9-8 9-8-9Z" fill="url(#gold2)"/>
+  <!-- caption -->
+  <text x="180" y="248" text-anchor="middle" fill="url(#gold2)"
+        font-family="Georgia, 'Times New Roman', serif" font-size="34" letter-spacing="1">Zon Bacaan</text>
+  <text x="180" y="292" text-anchor="middle" fill="url(#gold2)"
+        font-family="Georgia, 'Times New Roman', serif" font-size="34" letter-spacing="1">Percuma</text>
+  <text x="180" y="336" text-anchor="middle" fill="url(#gold2)" opacity=".9"
+        font-family="Georgia, 'Times New Roman', serif" font-size="24">Perpustakaan</text>
+  <!-- rule + tagline -->
+  <path d="M92 364h176" stroke="url(#gold2)" stroke-width="1.2" opacity=".8"/>
+  <path d="M180 359l6 5-6 5-6-5Z" fill="url(#gold2)"/>
+  <text x="180" y="392" text-anchor="middle" fill="url(#gold2)" opacity=".8"
+        font-family="Georgia, serif" font-size="11" letter-spacing="4">BACAAN · ILMU</text>
+</svg>
