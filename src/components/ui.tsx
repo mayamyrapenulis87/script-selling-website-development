@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
-import { Check, Clock3, X } from "lucide-react";
+import { BookOpen, Check, Clock3, X } from "lucide-react";
 import { statusLabels, type WorkStatus } from "@/lib/types";
 
-export function StatusBadge({ status }: { status: WorkStatus }) {
+export function StatusBadge({ status, isFree = false }: { status: WorkStatus; isFree?: boolean }) {
+  if (isFree) return <span className="status-badge status-free"><BookOpen size={11} />PERCUMA</span>;
   return <span className={`status-badge status-${status}`}>{status === "hold" ? <Clock3 size={11} /> : <span className="status-dot" />}{statusLabels[status]}</span>;
 }
 
@@ -28,12 +29,7 @@ export function Modal({ title, eyebrow, children, onClose, wide = false }: { tit
     document.addEventListener("keydown", handler);
     return () => { clearTimeout(timer); document.body.style.overflow = overflow; document.removeEventListener("keydown", handler); previous?.focus(); };
   }, [onClose]);
-  return <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-    <div className={`modal${wide ? " modal-wide" : ""}`} ref={ref} role="dialog" aria-modal="true" aria-labelledby={titleId}>
-      <div className="modal-header"><div>{eyebrow && <p className="eyebrow">{eyebrow}</p>}<h2 id={titleId}>{title}</h2></div><button className="icon-button close-button" onClick={onClose} aria-label="Tutup dialog"><X size={21} /></button></div>
-      {children}
-    </div>
-  </div>;
+  return <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><div className={`modal${wide ? " modal-wide" : ""}`} ref={ref} role="dialog" aria-modal="true" aria-labelledby={titleId}><div className="modal-header"><div>{eyebrow && <p className="eyebrow">{eyebrow}</p>}<h2 id={titleId}>{title}</h2></div><button className="icon-button close-button" onClick={onClose} aria-label="Tutup dialog"><X size={21} /></button></div>{children}</div></div>;
 }
 
 export function Toast({ message, onClose }: { message: string; onClose: () => void }) {

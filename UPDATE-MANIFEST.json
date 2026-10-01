@@ -1,0 +1,419 @@
+{
+  "format": "source-update",
+  "instructions": "KEMAS-KINI-WINDOWS.md",
+  "excluded": [
+    ".env",
+    ".git",
+    ".next",
+    "node_modules",
+    "database contents",
+    "private uploaded manuscripts"
+  ],
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 364,
+      "sha256": "625f346ff64c9cd67f1d91d94ad7da4dd16d83e9e150d7842f19edf46c67e5e6"
+    },
+    {
+      "path": "KEMAS-KINI-WINDOWS.md",
+      "bytes": 5156,
+      "sha256": "bdbc373bc383128cdc637417e62f6ac612e2a3b33838407170f998ca0a28d33f"
+    },
+    {
+      "path": "drizzle.config.json",
+      "bytes": 156,
+      "sha256": "cc44502003e85bb5258a3a5b59522c28238a052d0f19abcf14338c71474467b7"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "bytes": 365,
+      "sha256": "c971926abccc506da1532570c55a95d5298b606901c4801866a4862969c13302"
+    },
+    {
+      "path": "next-env.d.ts",
+      "bytes": 247,
+      "sha256": "7b550dda9686c16f36a17bf9051d5dbf31e98555b30d114ac49fc49a1e712651"
+    },
+    {
+      "path": "next.config.ts",
+      "bytes": 104,
+      "sha256": "ab4c61f6ee100ae43610a18512f1ebcec842bb2405431e1009266173f21cf772"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 288122,
+      "sha256": "82d48e229f155b37429e8a3b055f2d8405d05d3d39b9304aab5593179ad96616"
+    },
+    {
+      "path": "package.json",
+      "bytes": 808,
+      "sha256": "925423280dd0f5666f6db099451e55f783aefc323e70660bd0c4440d673e8cb7"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "bytes": 108,
+      "sha256": "b8cd36495468ea54e029eb4b2e0e98f0feff6f95d6513e70db37a71c0e3bfba4"
+    },
+    {
+      "path": "public/favicon.svg",
+      "bytes": 378,
+      "sha256": "a62475f744d420d559e0c5d4ab96a1c2d1e00fcb0fc7f426abe2ad8e1658c2f6"
+    },
+    {
+      "path": "public/fonts/dm-sans-semibold.ttf",
+      "bytes": 48280,
+      "sha256": "b79a2ea7a38f33fd96a282fadb9ce97626bb0724a44d21075859f0e50239993a"
+    },
+    {
+      "path": "public/fonts/dm-sans.ttf",
+      "bytes": 48280,
+      "sha256": "b0ae3e89a7d3ef2b1838bb4b1ceb0b17cc3435af061eee809d76aa623ff116e9"
+    },
+    {
+      "path": "public/fonts/dm-serif-italic.ttf",
+      "bytes": 68312,
+      "sha256": "0ab2fcacedaafc0a7536453d4a763f131ba83a636706d3ec2d685cf04478a920"
+    },
+    {
+      "path": "public/fonts/dm-serif.ttf",
+      "bytes": 70348,
+      "sha256": "c03775f8cc3db88cfea259b231abe13f94e6a3d3cb01c09477a2e42a1f5919e1"
+    },
+    {
+      "path": "public/images/bilik-kepala.jpg",
+      "bytes": 168719,
+      "sha256": "019b9ed580ecd168d5f612d1e7533c8dfe9e5dc32123adb83488358fb5d8014c"
+    },
+    {
+      "path": "public/images/catatan-penulis.jpg",
+      "bytes": 186882,
+      "sha256": "1ab3d4b8ad18e25d1912c0fdc78f367c4e2707d5e858d91462955e0b7e247f54"
+    },
+    {
+      "path": "public/images/dua-senja.jpg",
+      "bytes": 189655,
+      "sha256": "f5ff00729296e85869ecd40d2a95c21cbe30e23f64143631c421d697304b3c93"
+    },
+    {
+      "path": "public/images/ebook.jpg",
+      "bytes": 164913,
+      "sha256": "98e4d73ed958505c34a5591fbfc20490334d9e4eb090ab06023d15ef1a964aed"
+    },
+    {
+      "path": "public/images/gerabak-3.jpg",
+      "bytes": 160604,
+      "sha256": "5b1fc8f494add40e6f06381f941a2c5cf2ad50cf4b2cbafd55e41955153884c0"
+    },
+    {
+      "path": "public/images/hujan.jpg",
+      "bytes": 89054,
+      "sha256": "8fbfab46a57a818ca32c3280939f79086e0c9fb983ce015f056944bc11bd4918"
+    },
+    {
+      "path": "public/images/kota-menunggu.jpg",
+      "bytes": 218772,
+      "sha256": "ce233c800c352ce5d448c932991613ca39bf581e6dec077808e3c03f0dbb4582"
+    },
+    {
+      "path": "public/images/kota-rahsia.jpg",
+      "bytes": 171551,
+      "sha256": "f3594c01faf877b2e34fc11643a166c7fdcf283e67acfe195df26d2f2dbefec2"
+    },
+    {
+      "path": "public/images/kota.jpg",
+      "bytes": 171551,
+      "sha256": "f3594c01faf877b2e34fc11643a166c7fdcf283e67acfe195df26d2f2dbefec2"
+    },
+    {
+      "path": "public/images/langit-novel.jpg",
+      "bytes": 164913,
+      "sha256": "98e4d73ed958505c34a5591fbfc20490334d9e4eb090ab06023d15ef1a964aed"
+    },
+    {
+      "path": "public/images/perpustakaan.jpg",
+      "bytes": 255268,
+      "sha256": "39ff826601e7161e3ca21e7a7b615cc9d9d482ea2fd15cf2dca56a46f21ed82d"
+    },
+    {
+      "path": "public/images/pitching-kota.jpg",
+      "bytes": 139170,
+      "sha256": "fcac98f93339d0019c777dd17dca793123012033286dc0c32d8b01752dba65d5"
+    },
+    {
+      "path": "public/images/pratonton-senja.jpg",
+      "bytes": 162360,
+      "sha256": "f2b60d6becca1f8dd3ef89d944978c955abaec75864c7a8a434365666883c80d"
+    },
+    {
+      "path": "public/images/ruang-kecil.jpg",
+      "bytes": 116021,
+      "sha256": "3ccbab8c355f295fd5c70d22523209b479c10799a22f93e46021a23909ea82f9"
+    },
+    {
+      "path": "public/images/rumah.jpg",
+      "bytes": 116021,
+      "sha256": "3ccbab8c355f295fd5c70d22523209b479c10799a22f93e46021a23909ea82f9"
+    },
+    {
+      "path": "public/images/sebelum-hujan.jpg",
+      "bytes": 244237,
+      "sha256": "b81ab7136be8efa2c76eb3e8418007779cf948c40ce954d0d4ed0a4ab68cfd07"
+    },
+    {
+      "path": "public/images/senja.jpg",
+      "bytes": 162360,
+      "sha256": "f2b60d6becca1f8dd3ef89d944978c955abaec75864c7a8a434365666883c80d"
+    },
+    {
+      "path": "public/images/teater.jpg",
+      "bytes": 139170,
+      "sha256": "fcac98f93339d0019c777dd17dca793123012033286dc0c32d8b01752dba65d5"
+    },
+    {
+      "path": "public/images/tun-teja.jpg",
+      "bytes": 206103,
+      "sha256": "0505498e6d6b55704564445823fae8fd623e77abfa364bdf1254d5701a4d40ce"
+    },
+    {
+      "path": "scripts/export-update.py",
+      "bytes": 3997,
+      "sha256": "be21b1a9c4371a51a9475ce5db135c0374337a8f86048e5d5de2777b6ee80280"
+    },
+    {
+      "path": "scripts/verify-personal.mjs",
+      "bytes": 15524,
+      "sha256": "5a74e7a54c9b423229d51f3f9adc23635ce88d84c01340a7960cf329da0e10e2"
+    },
+    {
+      "path": "scripts/verify-store-layout.mjs",
+      "bytes": 9873,
+      "sha256": "12d99c18e8ac4f202c25252f62d4a6cd8545775af644f9a0a6958ecf6d0b6c6e"
+    },
+    {
+      "path": "scripts/verify-upload.mjs",
+      "bytes": 12341,
+      "sha256": "671204dc9b00e41788da0dfa0c402db5d00e49f97a51ddb610e1f1e5ab29723c"
+    },
+    {
+      "path": "scripts/verify.mjs",
+      "bytes": 12773,
+      "sha256": "797bc3c7162a8b11b4d19828cd8498fc1fe0cb6392062013012dd0b18c7382fb"
+    },
+    {
+      "path": "src/app/api/auth/route.ts",
+      "bytes": 3099,
+      "sha256": "f6e92b1ce50bdafb7c60e2a935164e6ef20074cc7027e2cc3824a504d375a718"
+    },
+    {
+      "path": "src/app/api/download/[token]/route.ts",
+      "bytes": 1287,
+      "sha256": "3dc2ab92f4e293378920909ed69580ecefc6220e46939a2541dd6a32400a7c14"
+    },
+    {
+      "path": "src/app/api/free/[id]/route.ts",
+      "bytes": 1373,
+      "sha256": "e92c301db6a12d5e54edd8440a1e0c49afe7dd6cca5d5a65ea205b249d524bb3"
+    },
+    {
+      "path": "src/app/api/health/route.ts",
+      "bytes": 295,
+      "sha256": "85ecde9db86952d444d593f4133df2b517ed768accc487350d35bb0db498357f"
+    },
+    {
+      "path": "src/app/api/newsletter/route.ts",
+      "bytes": 683,
+      "sha256": "862706d5c85b8a19a5104f5ef96583042f48b4b625de11b16f92117994d30e1a"
+    },
+    {
+      "path": "src/app/api/orders/[id]/route.ts",
+      "bytes": 1877,
+      "sha256": "c2adefeb64be21fcdd1ad24bc82416bbcc82eb94e846c6021c4b8c4396871ec3"
+    },
+    {
+      "path": "src/app/api/orders/route.ts",
+      "bytes": 2826,
+      "sha256": "6b027bc903d1d7bcd38ab0b5480df5f37ee82edf1a9633dd7fdd12c5858617e2"
+    },
+    {
+      "path": "src/app/api/profile/route.ts",
+      "bytes": 1987,
+      "sha256": "62f062fa505c193a9352d045db5538ade4678c9116908810448679571fc925b4"
+    },
+    {
+      "path": "src/app/api/studio/examples/route.ts",
+      "bytes": 1627,
+      "sha256": "27dadd51256f984efca56d14ece43528fd046cf410cdf73453f0d1275e1d710b"
+    },
+    {
+      "path": "src/app/api/studio/route.ts",
+      "bytes": 1163,
+      "sha256": "30f00103220ca653ab6642a452b0f39becd1bbf9b7626aca4902e57c96ca22ae"
+    },
+    {
+      "path": "src/app/api/works/[id]/file/route.ts",
+      "bytes": 1061,
+      "sha256": "bbbe373aee230bb4a560e3f282584352f1c6713ca1253e3e5edae0023ee74d90"
+    },
+    {
+      "path": "src/app/api/works/[id]/route.ts",
+      "bytes": 3407,
+      "sha256": "5010f958f5387b1467da97c0b4e11626c1a4633c7b30c1716793edca9a837657"
+    },
+    {
+      "path": "src/app/api/works/route.ts",
+      "bytes": 1162,
+      "sha256": "df36213abe56208112ff7d2b44fb12d0032763a1c56a9b37154a77ab7333905b"
+    },
+    {
+      "path": "src/app/error.tsx",
+      "bytes": 721,
+      "sha256": "03eb77e7e17e8087ad8c061c3932a26f9e055c2fa1e90ecd1d2c4f7a7bdbb86d"
+    },
+    {
+      "path": "src/app/globals.css",
+      "bytes": 84597,
+      "sha256": "74a7d5ba165b588a839e80d26fc1d4c44cbebb7b038d466b331600ee81ecc7bb"
+    },
+    {
+      "path": "src/app/karya/[id]/page.tsx",
+      "bytes": 3654,
+      "sha256": "0d801b9ba085990328d97525db6afcb8f897b1620cdd9e3e5f97684ce922c140"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "bytes": 682,
+      "sha256": "fad9dfebfcba08d825b0469324b157cda78aca4dbf008bb5844c9a20e6e5a30f"
+    },
+    {
+      "path": "src/app/not-found.tsx",
+      "bytes": 487,
+      "sha256": "25d67d9a5d92eb29f76fcd3038b21c051389568c01c60790891eee27045006c8"
+    },
+    {
+      "path": "src/app/page.tsx",
+      "bytes": 592,
+      "sha256": "7f94e199c88726c667aee94d4169c658e53029c924adafd919663d97323aad0e"
+    },
+    {
+      "path": "src/app/pesanan/[token]/page.tsx",
+      "bytes": 6042,
+      "sha256": "d7b135b830f7a48f47903eb035685878a6f7d2376618c486b871a327c7a8c050"
+    },
+    {
+      "path": "src/app/robots.ts",
+      "bytes": 371,
+      "sha256": "e2f5abe1c571fcc6688a7f5bd525e79e5c059986dc78a5e4513642e9ee26cb00"
+    },
+    {
+      "path": "src/app/sitemap.ts",
+      "bytes": 735,
+      "sha256": "f6e7fa62b81ba72d36fd34cc7f5b50596ae3cf3b4bd21694634fd6e0326fd163"
+    },
+    {
+      "path": "src/app/studio/page.tsx",
+      "bytes": 543,
+      "sha256": "7a0861c487cf3fe472a3257416bda2d251381cd2e60b1f1751be556e9c37d0f0"
+    },
+    {
+      "path": "src/components/brand.tsx",
+      "bytes": 795,
+      "sha256": "c045558030e13ae678d612910df936096fe3fd61aa730d8f4008fdcf8de03ce3"
+    },
+    {
+      "path": "src/components/marketplace.tsx",
+      "bytes": 26671,
+      "sha256": "5b71cf96b1a03ab6f199023fa49ec8f5f3fc96eab8a8621b12773df2c3da0551"
+    },
+    {
+      "path": "src/components/profile-dialog.tsx",
+      "bytes": 3098,
+      "sha256": "c49e93a2912ee35105b57cdb7535a5adf51d15eb93050bdb44047833b993fc01"
+    },
+    {
+      "path": "src/components/refresh-order.tsx",
+      "bytes": 736,
+      "sha256": "b8b25c9da73f6cfabe9015f366233dcf590dcd7e1768aecd61b5005613e835ae"
+    },
+    {
+      "path": "src/components/studio.tsx",
+      "bytes": 25927,
+      "sha256": "06a69f8d8cb4f217c082de5388f42aba27705551ee77921bae34a2638c53ab01"
+    },
+    {
+      "path": "src/components/ui.tsx",
+      "bytes": 2933,
+      "sha256": "19b8234fbb54edaa81e601214e503a2c1a12a94f6225e8ded04f1d99e42ae3d3"
+    },
+    {
+      "path": "src/components/upload-dialog.tsx",
+      "bytes": 12862,
+      "sha256": "7860a8edef9de2c5dceb3d899627cd94e6386b5b19098231786e725f440db461"
+    },
+    {
+      "path": "src/components/work-card.tsx",
+      "bytes": 3248,
+      "sha256": "886adaafc6cb59f6ff3207c8d4d48cddfb0d738095fa419ba1cdd1a440c3fbcd"
+    },
+    {
+      "path": "src/components/work-dialogs.tsx",
+      "bytes": 9227,
+      "sha256": "28a84d5b49ab26e975aeeef2341507f1727d91fce97e21b4a8573e87a6149bdf"
+    },
+    {
+      "path": "src/components/work-page.tsx",
+      "bytes": 1703,
+      "sha256": "1980b55524e1d11781cb6abba95fd309b4b7abccad4a23b6d40127833bbe6010"
+    },
+    {
+      "path": "src/db/index.ts",
+      "bytes": 547,
+      "sha256": "44d8e984cf4d238facb3e984c6a2ffa7abfca11768da1304ff439d2b7246990b"
+    },
+    {
+      "path": "src/db/schema.ts",
+      "bytes": 2850,
+      "sha256": "f2b32c3c2d5ec1a933623d500a101ac08f88483407c3d3b367bda5da874eed6c"
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "bytes": 1965,
+      "sha256": "98c41dee05396cbbe5e3b85da2aeca3f38cdf5092e8c676cf76cede716591c57"
+    },
+    {
+      "path": "src/lib/catalog.ts",
+      "bytes": 15234,
+      "sha256": "06650b505596219b802890726eb3261057a67576a188d139726a7c139b6b389b"
+    },
+    {
+      "path": "src/lib/client.ts",
+      "bytes": 1684,
+      "sha256": "260d00ada69b0749934a78bbda7bff5f0bbd49e5ab078c10545880aaa70b2dd7"
+    },
+    {
+      "path": "src/lib/site-url.ts",
+      "bytes": 983,
+      "sha256": "80212c76ce35fa931a99b292fe0f039358eb8b3d7b575be62ecb335e4e3b01fe"
+    },
+    {
+      "path": "src/lib/types.ts",
+      "bytes": 5827,
+      "sha256": "46459e03e4857ebd8cd18cb9bb5c9dbb8bd82612fd6f6a62769841d235c9d3be"
+    },
+    {
+      "path": "src/lib/work-input.ts",
+      "bytes": 4869,
+      "sha256": "b3a6a23a377bea74ee9eec40863eec97cb096c7b773b59a3f60c974ede146f68"
+    },
+    {
+      "path": "src/lib/writer-defaults.ts",
+      "bytes": 340,
+      "sha256": "e7cd2010c354d4e8c86a4ccfd3f90fefa2fe0a3edadf0e76f981d662fcfb5f32"
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 723,
+      "sha256": "4ea5303fb21d01b83151db57d43246ba2ac0bbb4e79b9e83b3a120b2599c4351"
+    }
+  ]
+}

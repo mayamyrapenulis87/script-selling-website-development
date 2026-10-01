@@ -1,0 +1,22 @@
+# Local secrets. Set production values in Vercel, not in the repository.
+.env
+.env.*
+!.env.example
+
+# Dependencies and generated build output
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+
+# Temporary tests, logs and generated distribution archives
+.artifacts/
+*.log
+public/downloads/*.zip
+__pycache__/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
