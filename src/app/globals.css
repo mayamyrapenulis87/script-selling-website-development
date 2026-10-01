@@ -1034,3 +1034,21 @@ h1, h2, h3, h4 { font-weight: 400; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+.card-read { min-height: 31px; font-size: 9px; padding: 8px 11px; border-radius: 4px; gap: 7px; }
+.free-card-action-group { display: grid; grid-template-columns: 1fr auto; gap: 6px; width: 100%; }
+.card-blog-target { min-height: 31px; font-size: 9px; padding: 8px 9px; border-radius: 4px; border: 1px solid #c7d9bc; color: #4e7046; background: #f3f8ee; }
+.card-blog-target:hover { background: #e2edd8; border-color: #3b6033; color: #2d4c26; }
+.nav-free-zone { display: inline-flex; align-items: center; color: #43663a !important; font-weight: 600; padding: 5px 9px; background: #e5f0dc; border-radius: 14px; border: 1px solid #cadcbe; }
+.nav-free-zone:hover { background: #d7eacb; color: #23431c !important; }
+.hero-free-zone { border-color: #92b083; color: #3d6034; background: #fdfef9; }
+.hero-free-zone:hover { background: #eef5e7; border-color: #3d6034; color: #26431e; }
+.free-banner-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 19px; }
+.free-banner-blog-btn { background: #ffffff; border-color: #bcd4af; color: #375b2e; font-weight: 600; }
+.free-banner-blog-btn:hover { background: #f3f8ee; border-color: #375b2e; color: #24441c; }
+.blog-library-callout { display: flex; align-items: center; gap: 17px; background: #ebf4e3; border: 1px solid #cfe0c2; border-radius: 8px; padding: 18px 23px; margin: 0 0 20px; color: #3b5a32; }
+.blog-library-callout strong { display: block; font-size: 13px; color: #2c4923; }
+.blog-library-callout p { font-size: 11px; color: #627c59; margin: 4px 0 0; }
+.blog-library-callout .button { margin-left: auto; white-space: nowrap; font-size: 11px; background: #ffffff; border-color: #acc89e; color: #375a2d; }
+.blog-library-callout .button:hover { background: #e2efd7; border-color: #27451e; color: #1e3916; }
+.mobile-free-link { display: flex; align-items: center; padding: 11px 8px; color: #3c5e33; font-weight: 600; background: #e5f0dc; border-radius: 6px; margin: 6px 0; }
