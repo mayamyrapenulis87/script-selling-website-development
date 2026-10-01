@@ -28,7 +28,7 @@ export function ProfileDialog({ initialName, onClose, onSaved }: { initialName: 
       <label className="field">Nama pena / nama penulis<input name="displayName" defaultValue={profile.displayName} minLength={2} maxLength={80} required /></label>
       <label className="field">Tentang anda <small>(dipaparkan kepada umum)</small><textarea name="bio" defaultValue={profile.bio} rows={4} maxLength={1200} placeholder="Perkenalkan suara, genre dan perjalanan penulisan anda…" /></label>
       <label className="field">Pautan blog Blogger / blog sendiri <small>(pilihan)</small><input name="blogUrl" type="url" defaultValue={profile.blogUrl} maxLength={600} placeholder="https://nama-blog-anda.blogspot.com" /></label>
-      <div className="info-note"><ShieldCheck size={18} /><p>Upload fail dan semua permintaan Buy / Hold diurus terus di website Naskah ini. Hanya anda boleh menukar status dan mengesahkan jualan. Fail penuh tidak dipaparkan kepada umum.</p></div>
+      <div className="info-note"><ShieldCheck size={18} /><p>Upload fail dan semua permintaan Buy / Hold diurus terus di laman mayamyrastories ini. Hanya anda boleh menukar status dan mengesahkan jualan. Fail penuh tidak dipaparkan kepada umum.</p></div>
       <div className="info-note"><BookOpen size={18} /><p>Blog lama boleh kekal untuk cerpen dan bacaan umum. Pautan blog di sini pilihan sahaja; ia tidak mengubah artikel atau memasang sistem jualan pada Blogger.</p></div>
       {error && <p className="form-error" role="alert">{error}</p>}
       <button className="button full-width" disabled={loading}>{loading ? <><Loader2 size={16} className="spin" />Menyimpan…</> : <>Simpan profil <ArrowUpRight size={16} /></>}</button>

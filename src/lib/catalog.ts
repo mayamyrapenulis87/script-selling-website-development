@@ -1,49 +1,65 @@
 import { cache } from "react";
 import { db } from "@/db";
 import { manuscripts, orders, siteState, writerSettings } from "@/db/schema";
-import { and, asc, desc, eq, inArray, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, like, lte, sql } from "drizzle-orm";
 import { writerDefaults } from "./writer-defaults";
 import { displayFormat, displayGenre, isFreeFormat, sectionForFormat, type PublicProfile, type PublicWork, type WorkFormat, type WorkProgress, type WorkStatus } from "./types";
 
 type Example = { id: string; title: string; format: WorkFormat; genre: string; price: number; pages: number; episodes: number; duration: number; status: WorkStatus; image: string; featured: boolean; synopsis: string; excerpt: string; progress?: WorkProgress; holdHours?: number };
 
 const examples: Example[] = [
-  { id: "contoh-teater-tun-teja", title: "Teater Tun Teja", format: "Skrip Teater", genre: "Naskah Khas Musim Perayaan", price: 3800, pages: 94, episodes: 1, duration: 110, status: "available", image: "/images/tun-teja.jpg", featured: true, holdHours: 48, synopsis: "Sebuah adaptasi bebas yang menemukan Tun Teja bukan sebagai watak latar belakang sejarah, tetapi seorang perempuan berjiwa besar yang memilih suara dan maruahnya sendiri tatkala istana menuntut lebih daripada apa yang hatinya rela beri.", excerpt: "BABAK 1 — BALAI ISTANA\n\nTUN TEJA berdiri di hadapan tirai emas. Di luar, bunyi paluan kompang semakin jauh.\n\nTUN TEJA\nJika sejarah mahu menyebut nama aku, biarlah ia menyebut pilihan aku, bukan penyerahan aku." },
-  { id: "contoh-kota-yang-menunggu", title: "Kota yang Menunggu", format: "Drama Bersiri Perdana", genre: "Pengorbanan & Realiti Kota", price: 18000, pages: 960, episodes: 30, duration: 45, status: "available", image: "/images/kota-menunggu.jpg", featured: true, holdHours: 72, synopsis: "Tiga beradik yang lama terpisah terpaksa tinggal sebumbung demi memenuhi wasiat arwah ayah. Di tengah hiruk-pikuk Kuala Lumpur yang tidak pernah tidur, mereka menemukan bahawa pulang ke pangkuan keluarga juga satu perjuangan.", excerpt: "EPISOD 1 — PINTU YANG TERBUKA\n\nINT. RUMAH PUSAKA — MALAM\n\nLampu ruang tamu menyala buat pertama kali dalam lima tahun. AINA meletakkan tiga cawan di meja. Satu kerusi masih kosong.\n\nAINA\nDia akan datang. Kali ini, aku tahu dia akan datang." },
-  { id: "contoh-antara-dua-senja", title: "Antara Dua Senja", format: "Telefilem / Telemovie", genre: "Drama Ringan & Santai", price: 2800, pages: 86, episodes: 1, duration: 90, status: "available", image: "/images/dua-senja.jpg", featured: true, holdHours: 48, synopsis: "Selepas dua puluh tahun meninggalkan kampung halaman, seorang anak pulang untuk menjual rumah pusaka ibunya. Namun, sepucuk surat lama yang tidak pernah dikirim membawanya kembali kepada rahsia pengorbanan yang tak terucap.", excerpt: "FADE IN:\n\nEXT. PANTAI — SENJA\n\nBunyi deruan ombak memecah kesunyian petang. HANA, 32, berdiri dengan sebuah beg lusuh dan sepucuk surat yang belum dibuka.\n\nHANA (V.O.)\nAda tempat yang kita tinggalkan. Ada tempat yang tak pernah meninggalkan kita." },
-  { id: "contoh-sebuah-kota-rahsia", title: "Sebuah Kota & Rahsia", format: "Filem Cereka", genre: "Misteri & Thriller", price: 7500, pages: 106, episodes: 1, duration: 110, status: "available", image: "/images/kota-rahsia.jpg", featured: false, holdHours: 48, synopsis: "Seorang arkitek menemui ruang tersembunyi dalam pelan asal sebuah bangunan warisan bandar raya. Apabila rahsia itu mula mengancam keselamatan keluarganya, dia terpaksa memilih antara kebenaran dan keselamatan orang yang disayangi.", excerpt: "FADE IN:\n\nEXT. BANDAR RAYA — MALAM\n\nLampu bangunan memantul pada jalan basah. ARIF membuka gulungan pelan lama. Ada satu bilik yang tidak sepatutnya wujud.\n\nARIF\nKalau dinding ini boleh bercakap…" },
-  { id: "contoh-sebelum-hujan", title: "Sebelum Hujan", format: "Skrip Siri Pendek (Digital)", genre: "Bebas & Adaptasi Novel", price: 3600, pages: 168, episodes: 8, duration: 12, status: "available", image: "/images/sebelum-hujan.jpg", featured: false, holdHours: 24, synopsis: "Seorang jurugambar dan penjaga hutan bertemu di sebuah desa pedalaman yang bakal ditenggelami pembangunan empangan. Antara rakaman lensa dan perubahan masa, mereka belajar bahawa cinta kadangkala bermaksud merelakan.", excerpt: "EPISOD 1 — KABUS\n\nEXT. HUTAN SIMPAN — PAGI\n\nKabus tebal menyelubungi kanopi hijau. LISA mengangkat kameranya. Di hujung laluan denai, seorang lelaki berdiri menatap langit yang kian mendung." },
-  { id: "contoh-surat-ruang-kecil", title: "Surat di Ruang Kecil", format: "Drama Radio", genre: "Kerohanian & Motivasi", price: 1500, pages: 30, episodes: 1, duration: 35, status: "available", image: "/images/ruang-kecil.jpg", featured: false, holdHours: 24, synopsis: "Seorang penyampai radio malam menerima panggilan daripada seorang pendengar misteri yang membaca surat-surat lama tanpa penerima. Melalui satu malam siaran yang penuh emosi, dua jiwa belajar berdamai dengan luka silam.", excerpt: "SFX: DERUAN HUJAN RENYAI. DENGUNG PERALATAN STUDIO PERLAHAN.\n\nPENYAMPAI\nSelamat malam pendengar setia. Siapa bersama kami di talian?\n\nPEMANGGIL\nSaya cuma ingin tahu… adakah masih sempat untuk kita meminta maaf pada orang yang telah tiada?" },
-  { id: "contoh-langit-belum-selesai", title: "Langit yang Belum Selesai", format: "Novel / Manuskrip E-Book", genre: "Romance (Romantis)", price: 24, pages: 280, episodes: 1, duration: 0, progress: "Lengkap", status: "available", image: "/images/langit-novel.jpg", featured: true, holdHours: 48, synopsis: "Selepas kehilangan ibunya, seorang pelukis muda menemukan buku catatan harian yang membuka kisah cinta tersembunyi di tanah seberang. Sebuah naskah e-book tentang kemaafan, harapan dan warna kehidupan yang baru.", excerpt: "BAB 1 — LANGIT DI DALAM BINGKAI\n\nLangit petang itu kelihatan seperti lukisan kanvas yang belum selesai. Mira membiarkan daun tingkap studio terbuka luas. Di atas meja kayu jati, diari bersampul kain ungu itu menunggu untuk diselak." },
-  { id: "contoh-bilik-dalam-kepala", title: "Bilik Dalam Kepala", format: "Fiksyen (Cerita Rekaan)", genre: "Seram (Horror)", price: 18, pages: 148, episodes: 1, duration: 0, progress: "Lengkap", status: "available", image: "/images/bilik-kepala.jpg", featured: false, holdHours: 24, synopsis: "Sebuah novel fiksyen seram psikologi tentang seorang penulis yang menyewa rumah lama di pinggir bukit. Setiap tengah malam, bunyi ketukan di bilik paling hujung memaksanya menulis cerita yang bukan miliknya.", excerpt: "BAB 1\n\nAnak kunci berkarat itu tiada dalam senarai penyerahan rumah. Namun ia terbaring di dasar laci meja tulis, sejuk seperti ais ketika jari jemari menyentuhnya." },
-  { id: "contoh-catatan-penulis", title: "Catatan Seorang Penulis", format: "Panduan & Penulisan (How-To)", genre: "Motivasi & Pembangunan Diri", price: 15, pages: 96, episodes: 1, duration: 0, progress: "Lengkap", status: "available", image: "/images/catatan-penulis.jpg", featured: false, holdHours: 24, synopsis: "Sebuah panduan praktikal dan refleksi ikhlas daripada Maya Myra tentang seni menyiapkan manuskrip, membina plot yang memikat jiwa pembaca, dan mendisiplinkan diri mengharungi cabaran dunia penulisan.", excerpt: "MULA DENGAN SATU HALAMAN\n\nDraf pertama tulisan anda tidak perlu sempurna. Ia cuma perlu wujud. Jangan biarkan rasa ragu membunuh cerita yang sedang menanti untuk dilahirkan." },
-  { id: "contoh-bab-pertama-senja", title: "Antara Dua Senja — 3 Bab Pertama", format: "Pratonton E-Book (3 Bab Pertama)", genre: "Romance (Romantis)", price: 0, pages: 32, episodes: 1, duration: 0, progress: "Lengkap", status: "available", holdHours: 0, image: "/images/pratonton-senja.jpg", featured: false, synopsis: "Nikmati pembacaan tiga bab terawal daripada naskah novel Antara Dua Senja secara percuma sebelum mendapatkan edisi penuh.", excerpt: "BAB 1\n\nLangit senja di hujung jeti itu seakan-akan menyimpan sejuta kenangan yang tidak pernah luput ditelan masa. Hana menghela nafas panjang, menyedari bahawa takdir telah membawanya kembali." },
-  { id: "contoh-draf-pitching", title: "Kota yang Menunggu — Draf Pitching", format: "Draf Pitching (Skrip Pilihan)", genre: "Pengorbanan & Realiti Kota", price: 0, pages: 12, episodes: 1, duration: 0, progress: "Lengkap", status: "available", holdHours: 0, image: "/images/pitching-kota.jpg", featured: false, synopsis: "Dokumen sinopsis penuh, logline dan profil watak untuk produksi atau penerbit yang ingin menilai konsep drama bersiri ini.", excerpt: "LOGLINE:\n\nTiga beradik yang renggang bertembung semula di rumah pusaka keluarga, membongkar rahsia lama yang menguji erti sebenar sebuah pengorbanan." },
-  { id: "contoh-surat-gerabak-3", title: "Surat dari Gerabak 3", format: "Cerpen Mingguan", genre: "Romance (Romantis)", price: 0, pages: 10, episodes: 1, duration: 0, progress: "Lengkap", status: "available", holdHours: 0, image: "/images/gerabak-3.jpg", featured: false, synopsis: "Dalam kesesakan KTM Komuter setiap pagi, Izzat jatuh hati pada Zara yang sentiasa berdiri di sudut Gerabak 3. Sebuah lakaran potret dan nota kecil memulakan kisah yang manis tanpa suara.", excerpt: "GERABAK 3\n\nIzzat meninggalkan lakaran potret Zara dengan nota kecil di kerusi itu sebelum dia turun di stesen KL Sentral. Keesokan harinya, sekeping nota balasan menanti di tempat yang sama." },
+  { id: "teater-tun-teja", title: "Teater Tun Teja", format: "Skrip Teater", genre: "Naskah Khas Musim Perayaan", price: 3800, pages: 94, episodes: 1, duration: 110, status: "available", image: "/images/tun-teja.jpg", featured: true, holdHours: 48, synopsis: "Sebuah adaptasi bebas yang menemukan Tun Teja bukan sebagai watak latar belakang sejarah, tetapi seorang perempuan berjiwa besar yang memilih suara dan maruahnya sendiri tatkala istana menuntut lebih daripada apa yang hatinya rela beri.", excerpt: "BABAK 1 — BALAI ISTANA\n\nTUN TEJA berdiri di hadapan tirai emas. Di luar, bunyi paluan kompang semakin jauh.\n\nTUN TEJA\nJika sejarah mahu menyebut nama aku, biarlah ia menyebut pilihan aku, bukan penyerahan aku." },
+  { id: "kota-yang-menunggu", title: "Kota yang Menunggu", format: "Drama Bersiri Perdana", genre: "Pengorbanan & Realiti Kota", price: 18000, pages: 960, episodes: 30, duration: 45, status: "available", image: "/images/kota-menunggu.jpg", featured: true, holdHours: 72, synopsis: "Tiga beradik yang lama terpisah terpaksa tinggal sebumbung demi memenuhi wasiat arwah ayah. Di tengah hiruk-pikuk Kuala Lumpur yang tidak pernah tidur, mereka menemukan bahawa pulang ke pangkuan keluarga juga satu perjuangan.", excerpt: "EPISOD 1 — PINTU YANG TERBUKA\n\nINT. RUMAH PUSAKA — MALAM\n\nLampu ruang tamu menyala buat pertama kali dalam lima tahun. AINA meletakkan tiga cawan di meja. Satu kerusi masih kosong.\n\nAINA\nDia akan datang. Kali ini, aku tahu dia akan datang." },
+  { id: "antara-dua-senja-telemovie", title: "Antara Dua Senja", format: "Telefilem / Telemovie", genre: "Drama Ringan & Santai", price: 2800, pages: 86, episodes: 1, duration: 90, status: "available", image: "/images/dua-senja.jpg", featured: true, holdHours: 48, synopsis: "Selepas dua puluh tahun meninggalkan kampung halaman, seorang anak pulang untuk menjual rumah pusaka ibunya. Namun, sepucuk surat lama yang tidak pernah dikirim membawanya kembali kepada rahsia pengorbanan yang tak terucap.", excerpt: "FADE IN:\n\nEXT. PANTAI — SENJA\n\nBunyi deruan ombak memecah kesunyian petang. HANA, 32, berdiri dengan sebuah beg lusuh dan sepucuk surat yang belum dibuka.\n\nHANA (V.O.)\nAda tempat yang kita tinggalkan. Ada tempat yang tak pernah meninggalkan kita." },
+  { id: "sebuah-kota-dan-rahsia-filem", title: "Sebuah Kota & Rahsia", format: "Filem Cereka", genre: "Misteri & Thriller", price: 7500, pages: 106, episodes: 1, duration: 110, status: "available", image: "/images/kota-rahsia.jpg", featured: false, holdHours: 48, synopsis: "Seorang arkitek menemui ruang tersembunyi dalam pelan asal sebuah bangunan warisan bandar raya. Apabila rahsia itu mula mengancam keselamatan keluarganya, dia terpaksa memilih antara kebenaran dan keselamatan orang yang disayangi.", excerpt: "FADE IN:\n\nEXT. BANDAR RAYA — MALAM\n\nLampu bangunan memantul pada jalan basah. ARIF membuka gulungan pelan lama. Ada satu bilik yang tidak sepatutnya wujud.\n\nARIF\nKalau dinding ini boleh bercakap…" },
+  { id: "sebelum-hujan-digital", title: "Sebelum Hujan", format: "Skrip Siri Pendek (Digital)", genre: "Bebas & Adaptasi Novel", price: 3600, pages: 168, episodes: 8, duration: 12, status: "hold", image: "/images/sebelum-hujan.jpg", featured: false, holdHours: 24, synopsis: "Seorang jurugambar dan penjaga hutan bertemu di sebuah desa pedalaman yang bakal ditenggelami pembangunan empangan. Antara rakaman lensa dan perubahan masa, mereka belajar bahawa cinta kadangkala bermaksud merelakan.", excerpt: "EPISOD 1 — KABUS\n\nEXT. HUTAN SIMPAN — PAGI\n\nKabus tebal menyelubungi kanopi hijau. LISA mengangkat kameranya. Di hujung laluan denai, seorang lelaki berdiri menatap langit yang kian mendung." },
+  { id: "surat-di-ruang-kecil", title: "Surat di Ruang Kecil", format: "Drama Radio", genre: "Kerohanian & Motivasi", price: 1500, pages: 30, episodes: 1, duration: 35, status: "available", image: "/images/ruang-kecil.jpg", featured: false, holdHours: 24, synopsis: "Seorang penyampai radio malam menerima panggilan daripada seorang pendengar misteri yang membaca surat-surat lama tanpa penerima. Melalui satu malam siaran yang penuh emosi, dua jiwa belajar berdamai dengan luka silam.", excerpt: "SFX: DERUAN HUJAN RENYAI. DENGUNG PERALATAN STUDIO PERLAHAN.\n\nPENYAMPAI\nSelamat malam pendengar setia. Siapa bersama kami di talian?\n\nPEMANGGIL\nSaya cuma ingin tahu… adakah masih sempat untuk kita meminta maaf pada orang yang telah tiada?" },
+  { id: "langit-yang-belum-selesai-novel", title: "Langit yang Belum Selesai", format: "Novel / Manuskrip E-Book", genre: "Romance (Romantis)", price: 24, pages: 280, episodes: 1, duration: 0, progress: "Lengkap", status: "available", image: "/images/langit-novel.jpg", featured: true, holdHours: 48, synopsis: "Selepas kehilangan ibunya, seorang pelukis muda menemukan buku catatan harian yang membuka kisah cinta tersembunyi di tanah seberang. Sebuah naskah e-book tentang kemaafan, harapan dan warna kehidupan yang baru.", excerpt: "BAB 1 — LANGIT DI DALAM BINGKAI\n\nLangit petang itu kelihatan seperti lukisan kanvas yang belum selesai. Mira membiarkan daun tingkap studio terbuka luas. Di atas meja kayu jati, diari bersampul kain ungu itu menunggu untuk diselak." },
+  { id: "bilik-dalam-kepala", title: "Bilik Dalam Kepala", format: "Fiksyen (Cerita Rekaan)", genre: "Seram (Horror)", price: 18, pages: 148, episodes: 1, duration: 0, progress: "Lengkap", status: "available", image: "/images/bilik-kepala.jpg", featured: false, holdHours: 24, synopsis: "Sebuah novel fiksyen seram psikologi tentang seorang penulis yang menyewa rumah lama di pinggir bukit. Setiap tengah malam, bunyi ketukan di bilik paling hujung memaksanya menulis cerita yang bukan miliknya.", excerpt: "BAB 1\n\nAnak kunci berkarat itu tiada dalam senarai penyerahan rumah. Namun ia terbaring di dasar laci meja tulis, sejuk seperti ais ketika jari jemari menyentuhnya." },
+  { id: "catatan-seorang-penulis", title: "Catatan Seorang Penulis", format: "Panduan & Penulisan (How-To)", genre: "Motivasi & Pembangunan Diri", price: 15, pages: 96, episodes: 1, duration: 0, progress: "Lengkap", status: "available", image: "/images/catatan-penulis.jpg", featured: false, holdHours: 24, synopsis: "Sebuah panduan praktikal dan refleksi ikhlas daripada Maya Myra tentang seni menyiapkan manuskrip, membina plot yang memikat jiwa pembaca, dan mendisiplinkan diri mengharungi cabaran dunia penulisan.", excerpt: "MULA DENGAN SATU HALAMAN\n\nDraf pertama tulisan anda tidak perlu sempurna. Ia cuma perlu wujud. Jangan biarkan rasa ragu membunuh cerita yang sedang menanti untuk dilahirkan." },
+  { id: "bab-pertama-senja", title: "Antara Dua Senja — 3 Bab Pertama", format: "Pratonton E-Book (3 Bab Pertama)", genre: "Romance (Romantis)", price: 0, pages: 32, episodes: 1, duration: 0, progress: "Lengkap", status: "available", image: "/images/pratonton-senja.jpg", featured: false, synopsis: "Nikmati pembacaan tiga bab terawal daripada naskah novel Antara Dua Senja secara percuma sebelum mendapatkan edisi penuh.", excerpt: "BAB 1\n\nLangit senja di hujung jeti itu seakan-akan menyimpan sejuta kenangan yang tidak pernah luput ditelan masa. Hana menghela nafas panjang, menyedari bahawa takdir telah membawanya kembali." },
+  { id: "draf-pitching-kota", title: "Kota yang Menunggu — Draf Pitching", format: "Draf Pitching (Skrip Pilihan)", genre: "Pengorbanan & Realiti Kota", price: 0, pages: 12, episodes: 1, duration: 0, progress: "Lengkap", status: "available", image: "/images/pitching-kota.jpg", featured: false, synopsis: "Dokumen sinopsis penuh, logline dan profil watak untuk produksi atau penerbit yang ingin menilai konsep drama bersiri ini.", excerpt: "LOGLINE:\n\nTiga beradik yang renggang bertembung semula di rumah pusaka keluarga, membongkar rahsia lama yang menguji erti sebenar sebuah pengorbanan." },
+  { id: "surat-dari-gerabak-3", title: "Surat dari Gerabak 3", format: "Cerpen Mingguan", genre: "Romance (Romantis)", price: 0, pages: 10, episodes: 1, duration: 0, progress: "Lengkap", status: "available", image: "/images/gerabak-3.jpg", featured: false, synopsis: "Dalam kesesakan KTM Komuter setiap pagi, Izzat jatuh hati pada Zara yang sentiasa berdiri di sudut Gerabak 3. Sebuah lakaran potret dan nota kecil memulakan kisah yang manis tanpa suara.", excerpt: "GERABAK 3\n\nIzzat meninggalkan lakaran potret Zara dengan nota kecil di kerusi itu sebelum dia turun di stesen KL Sentral. Keesokan harinya, sekeping nota balasan menanti di tempat yang sama." },
 ];
 
-// Earlier iterations used these ids for shipped samples. Only a row still carrying
-// the internal sample filename is retired, so a writer's own manuscript is never touched.
-const legacyDemoIds = [
-  "antara-dua-senja", "rumah-yang-menunggu", "sebelum-hujan", "kota-tanpa-nama",
-  "pulang-ke-akar", "kopi-kamu-dan-aku", "jejak-di-hujung-jalan", "surat-untuk-esok",
-  "langit-yang-belum-selesai", "suara-di-hujung-talian", "sebuah-kota-dan-rahsia",
-  "teater-tun-teja", "kota-yang-menunggu", "antara-dua-senja-telemovie",
-  "sebuah-kota-dan-rahsia-filem", "sebelum-hujan-digital", "surat-di-ruang-kecil",
-  "langit-yang-belum-selesai-novel", "bilik-dalam-kepala", "catatan-seorang-penulis",
-  "bab-pertama-senja", "draf-pitching-kota", "surat-dari-gerabak-3",
-];
+const legacyDemoIds = ["antara-dua-senja", "rumah-yang-menunggu", "sebelum-hujan", "kota-tanpa-nama", "pulang-ke-akar", "kopi-kamu-dan-aku", "jejak-di-hujung-jalan", "surat-untuk-esok", "langit-yang-belum-selesai", "suara-di-hujung-talian", "sebuah-kota-dan-rahsia"];
 export const demoIds = [...new Set([...legacyDemoIds, ...examples.map((work) => work.id)])];
-export const demoWorkFlag = sql<boolean>`coalesce((${inArray(manuscripts.id, demoIds)} and ${manuscripts.fileName} = ${manuscripts.id} || '-naskah.pdf'), false)`;
+// Every sample id ever shipped, including the ones that carried a contoh- prefix
+// in earlier releases. Writer uploads always use random UUIDs, so they can
+// never collide with these fixed ids.
+const retiredSampleIds = [...new Set([...legacyDemoIds, ...legacyDemoIds.map((id) => `contoh-${id}`), ...examples.map((work) => `contoh-${work.id}`)])];
+const allSampleIds = [...new Set([...demoIds, ...retiredSampleIds])];
+// A row is only treated as an internal sample when its stored file still carries
+// the sample filename pattern. If the writer replaced the file with their own
+// manuscript, the row is their work and is never touched automatically.
+const sampleFileMatch = sql`(${manuscripts.fileName} = ${manuscripts.id} || '-contoh.txt' OR ${manuscripts.fileName} = ${manuscripts.id} || '-naskah.pdf')`;
+const sampleIdMatch = sql`(${inArray(manuscripts.id, allSampleIds)} OR ${like(manuscripts.id, "contoh-%")})`;
+// Only ids from retired releases are ever archived. The 12 current collection
+// ids are never part of this matcher.
+const retireIdMatch = sql`(${inArray(manuscripts.id, retiredSampleIds)} OR ${like(manuscripts.id, "contoh-%")})`;
+export const demoWorkFlag = sql<boolean>`coalesce((${sampleIdMatch} AND ${sampleFileMatch}), false)`;
 
 export async function ensureCatalog() {
-  const marker = await db.select().from(siteState).where(eq(siteState.id, "catalog_nullish_hold_v8")).limit(1);
+  const marker = await db.select().from(siteState).where(eq(siteState.id, "catalog_clean_v6")).limit(1);
   const existingExamples = await db.select({ id: manuscripts.id }).from(manuscripts).where(and(inArray(manuscripts.id, examples.map((work) => work.id)), eq(manuscripts.active, true)));
   if (marker.length && existingExamples.length === examples.length) return;
   const [writer] = await db.select({ name: writerSettings.displayName }).from(writerSettings).where(eq(writerSettings.id, "owner"));
   await db.transaction(async (tx) => {
-    await tx.update(manuscripts).set({ active: false }).where(and(inArray(manuscripts.id, legacyDemoIds), sql`${manuscripts.fileName} = ${manuscripts.id} || '-contoh.txt'`));
+    // Retire every sample id from earlier releases, but only while the row still
+    // carries an internal sample file. Rows the writer repurposed with their own
+    // manuscript are left completely alone. Current collection ids are never
+    // retired here.
+    await tx.update(manuscripts).set({ active: false }).where(and(eq(manuscripts.active, true), retireIdMatch, sampleFileMatch));
+    // Reactivate current collection rows that are inactive yet still carry an
+    // internal sample file (for example after an interrupted migration). Rows
+    // the writer replaced with their own manuscript stay exactly as they are.
+    await tx.update(manuscripts).set({ active: true }).where(and(eq(manuscripts.active, false), inArray(manuscripts.id, examples.map((work) => work.id)), sampleFileMatch));
+    // Insert only the samples that are genuinely missing. Existing rows — whether
+    // hidden by the writer or edited into real works — are never overwritten.
+    const present = await tx.select({ id: manuscripts.id }).from(manuscripts).where(inArray(manuscripts.id, examples.map((work) => work.id)));
+    const have = new Set(present.map((row) => row.id));
     for (const [index, work] of examples.entries()) {
+      if (have.has(work.id)) continue;
       await tx.insert(manuscripts).values({
         ...work,
         author: writer?.name || writerDefaults.displayName,
@@ -51,32 +67,9 @@ export async function ensureCatalog() {
         fileName: `${work.id}-naskah.pdf`,
         fileMime: "application/pdf",
         fileData: Buffer.from(`%PDF-1.4\n% ${work.title.toUpperCase()}\n% KARYA OLEH ${writer?.name || writerDefaults.displayName}\n1 0 obj\n<< /Title (${work.title}) >>\nendobj\n%%EOF`).toString("base64"),
-      }).onConflictDoUpdate({
-        target: manuscripts.id,
-        set: {
-          title: work.title,
-          format: work.format,
-          genre: work.genre,
-          price: work.price,
-          pages: work.pages,
-          episodes: work.episodes,
-          duration: work.duration,
-          progress: work.progress || "Lengkap",
-          holdHours: work.holdHours ?? 48,
-          image: work.image,
-          featured: work.featured,
-          synopsis: work.synopsis,
-          excerpt: work.excerpt,
-          active: true,
-          // Refresh the sample file only when it is still an internal sample.
-          // A manuscript the writer uploaded is preserved byte for byte.
-          fileName: sql`case when ${manuscripts.fileName} = ${manuscripts.id} || '-contoh.txt' then ${manuscripts.id} || '-naskah.pdf' else ${manuscripts.fileName} end`,
-          fileData: sql`case when ${manuscripts.fileName} = ${manuscripts.id} || '-contoh.txt' then excluded.file_data else ${manuscripts.fileData} end`,
-          fileMime: sql`case when ${manuscripts.fileName} = ${manuscripts.id} || '-contoh.txt' then 'application/pdf' else ${manuscripts.fileMime} end`,
-        },
-      });
+      }).onConflictDoNothing();
     }
-    await tx.insert(siteState).values({ id: "catalog_nullish_hold_v8", value: "1" }).onConflictDoNothing();
+    await tx.insert(siteState).values({ id: "catalog_clean_v6", value: "1" }).onConflictDoNothing();
   });
 }
 

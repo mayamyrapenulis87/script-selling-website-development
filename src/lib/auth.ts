@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { writerSessions, writerSettings } from "@/db/schema";
 import { and, eq, gt } from "drizzle-orm";
 
-const COOKIE = "naskah_writer";
+const COOKIE = "mayamyrastories_writer";
 const digest = (value: string) => createHash("sha256").update(value).digest("hex");
 export function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");

@@ -37,7 +37,7 @@ async function verify() {
     await expect(owner.getByRole("link", { name: "Terokai koleksi karya" })).toBeVisible();
     check("Visitors see no upload or owner links in header, hero, callout or footer", true);
     check("Anonymous upload is rejected by the server", (await anonymous.post("/api/works", { multipart: { title: "Unauthorized upload" } })).status() === 401);
-    check("Fake owner cookie cannot authorize an upload", (await anonymous.post("/api/works", { headers: { Cookie: "naskah_writer=fake-owner" }, multipart: { title: "Fake owner upload" } })).status() === 401);
+    check("Fake owner cookie cannot authorize an upload", (await anonymous.post("/api/works", { headers: { Cookie: "mayamyrastories_writer=fake-owner" }, multipart: { title: "Fake owner upload" } })).status() === 401);
     check("Anonymous script edits are rejected", (await anonymous.patch(`/api/works/${initialCatalog[0].id}`, { data: { status: "sold" } })).status() === 401);
     check("Anonymous script deletion is rejected", (await anonymous.delete(`/api/works/${initialCatalog[0].id}`)).status() === 401);
     await mobile.goto(base, { waitUntil: "networkidle" });

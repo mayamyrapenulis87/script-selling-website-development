@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Upload Skrip & Ruang Penulis — Naskah",
+  title: "Upload Skrip & Ruang Penulis — mayamyrastories",
   robots: { index: false, follow: false },
 };
 

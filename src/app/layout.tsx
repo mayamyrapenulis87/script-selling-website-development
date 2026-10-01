@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Naskah — Karya peribadi, cerita untuk ditemukan",
+  title: "mayamyrastories — Karya peribadi, cerita untuk ditemukan",
   description: "Koleksi karya peribadi penulis: manuskrip novel lengkap atau separuh siap, skrip drama TV, telemovie, skrip layar, filem pendek dan drama radio. Baca sinopsis, pilih Buy atau tempah dengan Hold.",
   icons: { icon: "/favicon.svg" },
 };

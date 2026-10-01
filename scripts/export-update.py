@@ -1,7 +1,9 @@
-"""Build a source update ZIP with public images/fonts but no secrets or Git state.
+"""Export a safe, downloadable source update from the current project root.
 
-Run from the project root: python scripts/export-update.py
-The archive retains paths such as src/app/page.tsx and public/images/tun-teja.jpg.
+Run: python scripts/export-update.py
+Writes: public/downloads/naskah-maya-update.zip
+Uses only Python's standard library. Never includes .env, .git, database rows,
+private uploaded manuscripts, node_modules or .next build output.
 """
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -9,7 +11,7 @@ import hashlib
 import json
 
 ROOT = Path(__file__).resolve().parent.parent
-DESTINATION = ROOT / "public" / "downloads" / "naskah-maya-update.zip"
+OUTPUT = ROOT / "public" / "downloads" / "naskah-maya-update.zip"
 ROOT_FILES = (
     ".gitignore", "KEMAS-KINI-WINDOWS.md", "package.json", "package-lock.json",
     "tsconfig.json", "next.config.ts", "postcss.config.mjs", "eslint.config.mjs",
@@ -23,53 +25,63 @@ REQUIRED_COVERS = (
     "catatan-penulis.jpg", "pratonton-senja.jpg", "pitching-kota.jpg", "gerabak-3.jpg",
 )
 REQUIRED_FONTS = ("dm-sans.ttf", "dm-sans-semibold.ttf", "dm-serif.ttf", "dm-serif-italic.ttf")
+EXCLUDED_PARTS = {".git", ".next", ".vercel", "node_modules", ".artifacts", "downloads", "__pycache__"}
 
 
-def build():
+def main():
     required = [ROOT / "public" / "images" / name for name in REQUIRED_COVERS]
     required += [ROOT / "public" / "fonts" / name for name in REQUIRED_FONTS]
     missing = [path.relative_to(ROOT).as_posix() for path in required if not path.is_file() or path.stat().st_size == 0]
     if missing:
-        raise RuntimeError("Required assets are missing: " + ", ".join(missing))
+        raise SystemExit("Required cover/font files are missing: " + ", ".join(missing))
 
     files = [ROOT / name for name in ROOT_FILES if (ROOT / name).is_file()]
-    files += [path for path in (ROOT / "src").rglob("*") if path.is_file() and not path.is_symlink() and path.suffix in SOURCE_EXTENSIONS]
-    for folder in (ROOT / "public" / "images", ROOT / "public" / "fonts"):
-        files += [path for path in folder.rglob("*") if path.is_file() and not path.is_symlink() and path.suffix.lower() in ASSET_EXTENSIONS]
+    for folder in (ROOT / "src", ROOT / "scripts", ROOT / "public" / "images", ROOT / "public" / "fonts"):
+        files.extend(path for path in folder.rglob("*") if path.is_file() and not path.is_symlink())
     favicon = ROOT / "public" / "favicon.svg"
     if favicon.is_file():
         files.append(favicon)
-    files += [path for path in (ROOT / "scripts").glob("*") if path.is_file() and not path.is_symlink() and path.suffix in {".mjs", ".py"}]
-    files = sorted(set(files), key=lambda path: path.relative_to(ROOT).as_posix())
-    DESTINATION.parent.mkdir(parents=True, exist_ok=True)
+
+    unique = {}
+    for path in files:
+        relative = path.relative_to(ROOT)
+        parts = relative.parts
+        if any(part in EXCLUDED_PARTS or part.startswith(".env") for part in parts):
+            continue
+        if path.parent.name == "scripts" and path.suffix not in {".mjs", ".py"}:
+            continue
+        if path.parent.name in {"images", "fonts"} and path.suffix.lower() not in ASSET_EXTENSIONS:
+            continue
+        unique[relative.as_posix()] = path
 
     manifest = []
-    with ZipFile(DESTINATION, "w", ZIP_DEFLATED, compresslevel=6) as bundle:
-        for path in files:
-            relative = path.relative_to(ROOT).as_posix()
-            if any(part in {".git", ".next", "node_modules", ".vercel", ".artifacts"} or part.startswith(".env") for part in path.relative_to(ROOT).parts):
-                raise RuntimeError("Refusing to package a sensitive or generated path")
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    with ZipFile(OUTPUT, "w", ZIP_DEFLATED, compresslevel=6) as archive:
+        for name, path in sorted(unique.items()):
             content = path.read_bytes()
-            bundle.writestr(relative, content)
-            manifest.append({"path": relative, "bytes": len(content), "sha256": hashlib.sha256(content).hexdigest()})
-        bundle.writestr("UPDATE-MANIFEST.json", json.dumps({
+            archive.writestr(name, content)
+            manifest.append({"path": name, "bytes": len(content), "sha256": hashlib.sha256(content).hexdigest()})
+        archive.writestr("UPDATE-MANIFEST.json", json.dumps({
             "format": "source-update",
             "instructions": "KEMAS-KINI-WINDOWS.md",
-            "excluded": [".env", ".git", ".next", "node_modules", "database contents", "private uploaded manuscripts"],
+            "excluded": [".env", ".git", ".next", "node_modules", "database rows", "private manuscript uploads"],
             "files": manifest,
         }, ensure_ascii=False, indent=2))
 
-    with ZipFile(DESTINATION) as bundle:
-        if bundle.testzip() is not None:
-            raise RuntimeError("Archive verification failed")
-        names = set(bundle.namelist())
-        for path in required:
-            if path.relative_to(ROOT).as_posix() not in names:
-                raise RuntimeError("Required asset not included")
-    print(f"Created {DESTINATION.relative_to(ROOT)}")
-    print(f"Verified {len(files)} files, 12 required covers and 4 local fonts.")
-    print("No environment secrets, Git history, database or private upload data included.")
+    with ZipFile(OUTPUT, "r") as archive:
+        corrupt = archive.testzip()
+        names = set(archive.namelist())
+    if corrupt:
+        raise SystemExit(f"ZIP integrity check failed at: {corrupt}")
+    for path in required:
+        if path.relative_to(ROOT).as_posix() not in names:
+            raise SystemExit(f"ZIP is missing required asset: {path.relative_to(ROOT)}")
+    if any(part.startswith(".env") or part in EXCLUDED_PARTS for name in names for part in Path(name).parts):
+        raise SystemExit("Refusing to include secret, private or generated files")
+    print(f"Created {OUTPUT.relative_to(ROOT)} ({OUTPUT.stat().st_size:,} bytes)")
+    print(f"Verified {len(manifest)} project files, all 12 covers and all 4 local fonts.")
+    print("No .env secrets, Git history, build output, database content or private uploads included.")
 
 
 if __name__ == "__main__":
-    build()
+    main()
