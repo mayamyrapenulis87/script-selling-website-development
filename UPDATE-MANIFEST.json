@@ -337,8 +337,8 @@
     },
     {
       "path": "src/components/studio.tsx",
-      "bytes": 25927,
-      "sha256": "06a69f8d8cb4f217c082de5388f42aba27705551ee77921bae34a2638c53ab01"
+      "bytes": 25992,
+      "sha256": "c01dce68804a011b24ca43584aff7a8597426cee1415f76a5b3974ba79ccff8c"
     },
     {
       "path": "src/components/ui.tsx",
@@ -382,8 +382,8 @@
     },
     {
       "path": "src/lib/catalog.ts",
-      "bytes": 15234,
-      "sha256": "06650b505596219b802890726eb3261057a67576a188d139726a7c139b6b389b"
+      "bytes": 16516,
+      "sha256": "bb0ddb34050d322008cc22594308ffc5e55917e9a3b9b93305e6fe2cf0e3cba6"
     },
     {
       "path": "src/lib/client.ts",
